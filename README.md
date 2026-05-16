@@ -26,37 +26,73 @@ algerie-poste-mvc/
 - MySQL / MariaDB
 - Apache avec `mod_rewrite` activé
 
-## Installation
+## Déploiement sur XAMPP
 
-1. **Cloner le projet** :
-   ```bash
-   git clone https://github.com/SouierMokhtar/algerie-poste-mvc.git
-   cd algerie-poste-mvc
+### Étape 1 : Activer `mod_rewrite`
+
+1. Ouvrir `C:\xampp\apache\conf\httpd.conf`
+2. Trouver la ligne `#LoadModule rewrite_module modules/mod_rewrite.so`
+3. Retirer le `#` pour la décommenter :
    ```
-
-2. **Créer la base de données** :
-   ```bash
-   mysql -u root < database/schema.sql
+   LoadModule rewrite_module modules/mod_rewrite.so
    ```
-
-3. **Configurer la connexion** dans `config/database.php` :
-   ```php
-   return [
-       'host'     => 'localhost',
-       'dbname'   => 'traficbureau',
-       'username' => 'root',
-       'password' => '',
-       'charset'  => 'utf8mb4',
-   ];
+4. Trouver la section `<Directory "C:/xampp/htdocs">` et changer `AllowOverride None` en :
    ```
-
-4. **Configurer Apache** pour pointer le DocumentRoot vers le dossier `public/`.
-
-5. **Activer `mod_rewrite`** :
-   ```bash
-   sudo a2enmod rewrite
-   sudo systemctl restart apache2
+   AllowOverride All
    ```
+5. Redémarrer Apache depuis le panneau de contrôle XAMPP
+
+### Étape 2 : Copier le projet
+
+Copier tout le dossier du projet dans XAMPP :
+```
+C:\xampp\htdocs\operation\
+```
+
+La structure doit être :
+```
+C:\xampp\htdocs\operation\
+├── .htaccess               ← redirige vers public/
+├── public\
+│   ├── index.php
+│   ├── .htaccess
+│   └── assets\
+├── app\
+├── config\
+├── database\
+└── data\
+```
+
+### Étape 3 : Créer la base de données
+
+1. Ouvrir **phpMyAdmin** : `http://localhost/phpmyadmin`
+2. Cliquer sur **Importer**
+3. Sélectionner le fichier `database/schema.sql`
+4. Cliquer sur **Exécuter**
+
+Ou via le terminal MySQL de XAMPP :
+```bash
+C:\xampp\mysql\bin\mysql.exe -u root < C:\xampp\htdocs\operation\database\schema.sql
+```
+
+### Étape 4 : Accéder à l'application
+
+Ouvrir dans le navigateur :
+```
+http://localhost/operation/
+```
+
+### Configuration de la base de données
+
+Par défaut, le projet utilise `root` sans mot de passe (configuration standard XAMPP).
+Pour personnaliser, définir les variables d'environnement ou modifier `config/database.php` :
+
+| Variable     | Défaut         | Description           |
+|-------------|----------------|-----------------------|
+| `DB_HOST`   | `localhost`    | Serveur MySQL         |
+| `DB_NAME`   | `traficbureau` | Nom de la base        |
+| `DB_USER`   | `root`         | Utilisateur MySQL     |
+| `DB_PASS`   | *(vide)*       | Mot de passe MySQL    |
 
 ## Utilisation avec le serveur PHP intégré
 
